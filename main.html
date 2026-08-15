@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Academy</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f3f3;
+            color: #222;
+        }
+
+        header {
+            background: #222;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+
+        .lessons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .lesson {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 10px;
+            background: #222;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .teacher {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>♟️ Chess Academy</h1>
+    <p>Learn chess with Oscar</p>
+</header>
+
+<div class="container">
+
+    <div class="welcome">
+        <h2>Welcome to Chess Academy! 👋</h2>
+        <p>Your chess learning journey starts here.</p>
+
+        <button onclick="startLesson()">
+            Start Learning
+        </button>
+    </div>
+
+    <div class="lessons">
+
+        <div class="lesson">
+            <h2>♟️ Lesson 1</h2>
+            <h3>Meet the Pieces</h3>
+            <p>Learn how the chess pieces move.</p>
+            <button onclick="lesson1()">
+                Start Lesson
+            </button>
+        </div>
+
+        <div class="lesson">
+            <h2>🎯 Lesson 2</h2>
+            <h3>Capturing</h3>
+            <p>Learn how pieces capture each other.</p>
+            <button onclick="comingSoon()">
+                Coming Soon
+            </button>
+        </div>
+
+        <div class="lesson">
+            <h2>👑 Lesson 3</h2>
+            <h3>Check & Checkmate</h3>
+            <p>Learn how to attack the king and win the game.</p>
+            <button onclick="comingSoon()">
+                Coming Soon
+            </button>
+        </div>
+
+        <div class="lesson">
+            <h2>🏰 Lesson 4</h2>
+            <h3>Castling</h3>
+            <p>Learn one of the most important special moves.</p>
+            <button onclick="comingSoon()">
+                Coming Soon
+            </button>
+        </div>
+
+    </div>
+
+    <div class="teacher">
+        <h2>♟️ Oscar — Chess Teacher</h2>
+        <p>
+            Oscar will teach you chess using the knowledge programmed
+            into this website.
+        </p>
+
+        <p>
+            More lessons will be added as Henry learns more chess!
+        </p>
+    </div>
+
+</div>
+
+<script>
+    function startLesson() {
+        alert("Welcome to Chess Academy! ♟️");
+    }
+
+    function lesson1() {
+        alert(
+            "Lesson 1: The chess pieces!\n\n" +
+            "♙ Pawn\n" +
+            "♖ Rook\n" +
+            "♘ Knight\n" +
+            "♗ Bishop\n" +
+            "♕ Queen\n" +
+            "♔ King"
+        );
+    }
+
+    function comingSoon() {
+        alert("Oscar is still preparing this lesson! ♟️");
+    }
+</script>
+
+</body>
+</html>
