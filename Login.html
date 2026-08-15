@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Academy Login</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+
+        .login-box {
+            width: 320px;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 95%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #error {
+            color: red;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+    <h1>♟️ Chess Academy</h1>
+    <p>Log in to continue</p>
+
+    <input id="username" type="text" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()">Log In</button>
+
+    <p id="error"></p>
+</div>
+
+<script>
+    const users = {
+        pro: "chess123",
+        pink: "amongus",
+        oscar: "checkmate",
+        henry: "chessmaster"
+    };
+
+    function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const error = document.getElementById("error");
+
+        if (users[username] && users[username] === password) {
+            // Successful login
+            window.location.href = "main.html";
+        } else {
+            error.textContent = "Incorrect username or password.";
+        }
+    }
+</script>
+
+</body>
+</html>
