@@ -3,70 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Chess Academy</title>
+
+    <!-- Chessboard -->
+    <link rel="stylesheet"
+        href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
 
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f3f3f3;
-            color: #222;
+            background: #f2f2f2;
+            text-align: center;
         }
 
         header {
             background: #222;
             color: white;
             padding: 20px;
-            text-align: center;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
+        .page {
+            max-width: 800px;
+            margin: 25px auto;
             padding: 20px;
         }
 
-        .welcome {
+        .card {
             background: white;
             padding: 25px;
-            border-radius: 16px;
-            text-align: center;
+            border-radius: 18px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-        }
-
-        .lessons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-top: 25px;
-        }
-
-        .lesson {
-            background: white;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
 
         button {
-            padding: 12px 18px;
+            padding: 13px 20px;
+            margin: 6px;
             border: none;
             border-radius: 10px;
             background: #222;
             color: white;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 15px;
         }
 
         button:hover {
             opacity: 0.8;
         }
 
-        .teacher {
-            margin-top: 25px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 14px;
+        #gameScreen {
+            display: none;
+        }
+
+        #board {
+            width: min(90vw, 520px);
+            margin: 20px auto;
+        }
+
+        #dialogue {
+            background: #eeeeee;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px auto;
+            max-width: 500px;
+            font-size: 17px;
+        }
+
+        .sideButtons {
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -75,94 +81,160 @@
 
 <header>
     <h1>♟️ Chess Academy</h1>
-    <p>Learn chess with Oscar</p>
+    <p>Learn chess and play against Oscar</p>
 </header>
 
-<div class="container">
+<div class="page">
 
-    <div class="welcome">
+    <!-- HOME SCREEN -->
+
+    <div id="homeScreen" class="card">
+
         <h2>Welcome to Chess Academy! 👋</h2>
-        <p>Your chess learning journey starts here.</p>
 
-        <button onclick="startLesson()">
-            Start Learning
+        <p>
+            Learn chess, practice your skills,
+            and eventually challenge Oscar.
+        </p>
+
+        <button onclick="openGame()">
+            ♟️ Play Against Oscar
         </button>
-    </div>
 
-    <div class="lessons">
+        <h2>📚 Lessons</h2>
 
-        <div class="lesson">
-            <h2>♟️ Lesson 1</h2>
-            <h3>Meet the Pieces</h3>
-            <p>Learn how the chess pieces move.</p>
-            <button onclick="lesson1()">
-                Start Lesson
-            </button>
-        </div>
-
-        <div class="lesson">
-            <h2>🎯 Lesson 2</h2>
-            <h3>Capturing</h3>
-            <p>Learn how pieces capture each other.</p>
-            <button onclick="comingSoon()">
-                Coming Soon
-            </button>
-        </div>
-
-        <div class="lesson">
-            <h2>👑 Lesson 3</h2>
-            <h3>Check & Checkmate</h3>
-            <p>Learn how to attack the king and win the game.</p>
-            <button onclick="comingSoon()">
-                Coming Soon
-            </button>
-        </div>
-
-        <div class="lesson">
-            <h2>🏰 Lesson 4</h2>
-            <h3>Castling</h3>
-            <p>Learn one of the most important special moves.</p>
-            <button onclick="comingSoon()">
-                Coming Soon
-            </button>
-        </div>
+        <p>
+            Lessons will be added as Oscar's chess knowledge grows.
+        </p>
 
     </div>
 
-    <div class="teacher">
-        <h2>♟️ Oscar — Chess Teacher</h2>
-        <p>
-            Oscar will teach you chess using the knowledge programmed
-            into this website.
-        </p>
 
-        <p>
-            More lessons will be added as Henry learns more chess!
-        </p>
+    <!-- GAME SCREEN -->
+
+    <div id="gameScreen" class="card">
+
+        <h2>♟️ Play Against Oscar</h2>
+
+        <div class="sideButtons">
+
+            <button onclick="playWhite()">
+                ♙ Play White
+            </button>
+
+            <button onclick="playBlack()">
+                ♟ Play Black
+            </button>
+
+        </div>
+
+        <div id="board"></div>
+
+        <div id="dialogue">
+            Oscar: Welcome to the match! Choose your side.
+        </div>
+
+        <button onclick="newGame()">
+            🔄 New Game
+        </button>
+
+        <button onclick="goHome()">
+            🏠 Back
+        </button>
+
     </div>
 
 </div>
 
+
+<!-- Required libraries -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+
 <script>
-    function startLesson() {
-        alert("Welcome to Chess Academy! ♟️");
+
+    let board;
+    let game;
+    let playerColor = "w";
+
+
+    function openGame() {
+
+        document.getElementById("homeScreen").style.display = "none";
+        document.getElementById("gameScreen").style.display = "block";
+
+        newGame();
     }
 
-    function lesson1() {
-        alert(
-            "Lesson 1: The chess pieces!\n\n" +
-            "♙ Pawn\n" +
-            "♖ Rook\n" +
-            "♘ Knight\n" +
-            "♗ Bishop\n" +
-            "♕ Queen\n" +
-            "♔ King"
-        );
+
+    function newGame() {
+
+        game = new Chess();
+
+        board = Chessboard("board", {
+            position: "start",
+            draggable: true,
+            orientation: playerColor === "w" ? "white" : "black",
+
+            onDrop: function(source, target) {
+
+                const move = game.move({
+                    from: source,
+                    to: target,
+                    promotion: "q"
+                });
+
+                if (move === null) {
+                    return "snapback";
+                }
+
+                board.position(game.fen());
+
+                document.getElementById("dialogue").textContent =
+                    "Oscar: Nice move! I'm thinking...";
+            }
+        });
+
+        document.getElementById("dialogue").textContent =
+            playerColor === "w"
+            ? "Oscar: You're White. Your move!"
+            : "Oscar: You're Black. I'll make the first move.";
     }
 
-    function comingSoon() {
-        alert("Oscar is still preparing this lesson! ♟️");
+
+    function playWhite() {
+
+        playerColor = "w";
+
+        newGame();
+
+        document.getElementById("dialogue").textContent =
+            "Oscar: You're playing White. Your move!";
     }
+
+
+    function playBlack() {
+
+        playerColor = "b";
+
+        newGame();
+
+        document.getElementById("dialogue").textContent =
+            "Oscar: You're playing Black. I'll move first soon.";
+    }
+
+
+    function goHome() {
+
+        document.getElementById("gameScreen").style.display = "none";
+        document.getElementById("homeScreen").style.display = "block";
+    }
+
 </script>
 
 </body>
