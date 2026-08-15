@@ -1,80 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Chess Academy</title>
+<title>Chess Academy</title>
 
-    <!-- Chessboard -->
-    <link rel="stylesheet"
-        href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            text-align: center;
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f1f3f5;
+        color: #222;
+    }
+
+    header {
+        background: #242424;
+        color: white;
+        padding: 22px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 30px;
+    }
+
+    header p {
+        margin: 7px 0 0;
+        opacity: 0.8;
+    }
+
+    .page {
+        max-width: 1050px;
+        margin: auto;
+        padding: 25px 15px;
+    }
+
+    .home-card,
+    .game-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+
+    .home-card {
+        text-align: center;
+    }
+
+    .play-button {
+        border: 0;
+        border-radius: 14px;
+        padding: 15px 25px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #242424;
+        color: white;
+    }
+
+    .play-button:hover {
+        transform: scale(1.03);
+    }
+
+    #gameScreen {
+        display: none;
+    }
+
+    .game-layout {
+        display: flex;
+        gap: 25px;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    /* CHESS BOARD */
+
+    #board {
+        width: min(92vw, 620px);
+        aspect-ratio: 1;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        border: 7px solid #222;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        user-select: none;
+    }
+
+    .square {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .light {
+        background: #f0d9b5;
+    }
+
+    .dark {
+        background: #b58863;
+    }
+
+    .piece {
+        font-family: "DejaVu Sans", "Noto Sans Symbols 2", sans-serif;
+        font-size: clamp(34px, 7vw, 68px);
+        line-height: 1;
+        cursor: grab;
+        z-index: 2;
+        text-shadow: 1px 2px 2px rgba(0,0,0,0.35);
+    }
+
+    .piece:active {
+        cursor: grabbing;
+    }
+
+    .selected {
+        box-shadow: inset 0 0 0 5px rgba(255, 220, 60, 0.9);
+    }
+
+    .legal-dot::after {
+        content: "";
+        width: 24%;
+        height: 24%;
+        background: rgba(30,30,30,0.45);
+        border-radius: 50%;
+        position: absolute;
+        z-index: 1;
+    }
+
+    .capture-dot::after {
+        content: "";
+        position: absolute;
+        inset: 7%;
+        border: 5px solid rgba(30,30,30,0.45);
+        border-radius: 50%;
+        z-index: 1;
+    }
+
+    .last-move {
+        box-shadow: inset 0 0 0 999px rgba(255, 230, 80, 0.25);
+    }
+
+    /* OSCAR PANEL */
+
+    .side-panel {
+        width: min(92vw, 330px);
+    }
+
+    .oscar-box {
+        background: #fafafa;
+        border-radius: 16px;
+        padding: 18px;
+        border: 1px solid #ddd;
+    }
+
+    .oscar-title {
+        font-size: 21px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    #oscarDialogue {
+        min-height: 80px;
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        line-height: 1.45;
+        border: 1px solid #ddd;
+    }
+
+    #turnText {
+        font-weight: bold;
+        margin: 15px 0;
+    }
+
+    .controls button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        border: 0;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .new-game {
+        background: #242424;
+        color: white;
+    }
+
+    .home-button {
+        background: #ddd;
+    }
+
+    .captured {
+        min-height: 30px;
+        font-size: 25px;
+        word-break: break-word;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @media (max-width: 700px) {
+        .game-card {
+            padding: 12px;
         }
 
-        header {
-            background: #222;
-            color: white;
-            padding: 20px;
+        .side-panel {
+            width: 100%;
         }
-
-        .page {
-            max-width: 800px;
-            margin: 25px auto;
-            padding: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 13px 20px;
-            margin: 6px;
-            border: none;
-            border-radius: 10px;
-            background: #222;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            opacity: 0.8;
-        }
-
-        #gameScreen {
-            display: none;
-        }
-
-        #board {
-            width: min(90vw, 520px);
-            margin: 20px auto;
-        }
-
-        #dialogue {
-            background: #eeeeee;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 15px auto;
-            max-width: 500px;
-            font-size: 17px;
-        }
-
-        .sideButtons {
-            margin-bottom: 15px;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
@@ -86,154 +233,468 @@
 
 <div class="page">
 
-    <!-- HOME SCREEN -->
+    <!-- HOME -->
 
-    <div id="homeScreen" class="card">
+    <section id="homeScreen" class="home-card">
 
-        <h2>Welcome to Chess Academy! 👋</h2>
+        <h2>Welcome to Chess Academy</h2>
 
         <p>
-            Learn chess, practice your skills,
-            and eventually challenge Oscar.
+            Learn chess and challenge Oscar.
         </p>
 
-        <button onclick="openGame()">
+        <p>
+            <strong>You are always White.</strong><br>
+            <strong>Oscar is always Black.</strong>
+        </p>
+
+        <button class="play-button" onclick="startGame()">
             ♟️ Play Against Oscar
         </button>
 
-        <h2>📚 Lessons</h2>
-
-        <p>
-            Lessons will be added as Oscar's chess knowledge grows.
-        </p>
-
-    </div>
+    </section>
 
 
-    <!-- GAME SCREEN -->
+    <!-- GAME -->
 
-    <div id="gameScreen" class="card">
+    <section id="gameScreen" class="game-card">
 
-        <h2>♟️ Play Against Oscar</h2>
+        <div class="game-layout">
 
-        <div class="sideButtons">
+            <div>
+                <div id="board"></div>
+            </div>
 
-            <button onclick="playWhite()">
-                ♙ Play White
-            </button>
+            <div class="side-panel">
 
-            <button onclick="playBlack()">
-                ♟ Play Black
-            </button>
+                <div class="oscar-box">
+
+                    <div class="oscar-title">
+                        Oscar — Chess Teacher
+                    </div>
+
+                    <div id="turnText">
+                        Your move.
+                    </div>
+
+                    <div id="oscarDialogue">
+                        Welcome to the match!
+                    </div>
+
+                </div>
+
+                <br>
+
+                <div class="oscar-box">
+
+                    <strong>Captured pieces</strong>
+
+                    <p>You:</p>
+                    <div id="whiteCaptured" class="captured"></div>
+
+                    <p>Oscar:</p>
+                    <div id="blackCaptured" class="captured"></div>
+
+                </div>
+
+                <div class="controls">
+
+                    <button class="new-game" onclick="newGame()">
+                        🔄 New Game
+                    </button>
+
+                    <button class="home-button" onclick="goHome()">
+                        🏠 Back to Academy
+                    </button>
+
+                </div>
+
+            </div>
 
         </div>
 
-        <div id="board"></div>
-
-        <div id="dialogue">
-            Oscar: Welcome to the match! Choose your side.
-        </div>
-
-        <button onclick="newGame()">
-            🔄 New Game
-        </button>
-
-        <button onclick="goHome()">
-            🏠 Back
-        </button>
-
-    </div>
+    </section>
 
 </div>
 
 
-<!-- Required libraries -->
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-
+<!-- Chess rules -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+<!-- Oscar's programmed brain -->
+<script src="oscarChessbrain.js"></script>
 
 
 <script>
 
-    let board;
-    let game;
-    let playerColor = "w";
+let game;
+let selectedSquare = null;
+let thinking = false;
 
+let capturedWhite = [];
+let capturedBlack = [];
 
-    function openGame() {
+const pieces = {
 
-        document.getElementById("homeScreen").style.display = "none";
-        document.getElementById("gameScreen").style.display = "block";
+    w: {
+        p: "♙",
+        r: "♖",
+        n: "♘",
+        b: "♗",
+        q: "♕",
+        k: "♔"
+    },
 
-        newGame();
+    b: {
+        p: "♟",
+        r: "♜",
+        n: "♞",
+        b: "♝",
+        q: "♛",
+        k: "♚"
     }
 
+};
 
-    function newGame() {
 
-        game = new Chess();
+function startGame() {
 
-        board = Chessboard("board", {
-            position: "start",
-            draggable: true,
-            orientation: playerColor === "w" ? "white" : "black",
+    document.getElementById("homeScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
 
-            onDrop: function(source, target) {
+    newGame();
+}
 
-                const move = game.move({
-                    from: source,
-                    to: target,
-                    promotion: "q"
+
+function newGame() {
+
+    game = new Chess();
+
+    selectedSquare = null;
+    thinking = false;
+
+    capturedWhite = [];
+    capturedBlack = [];
+
+    updateCaptured();
+
+    setDialogue("Good luck! You are White, so you move first.");
+
+    renderBoard();
+}
+
+
+function renderBoard() {
+
+    const board = document.getElementById("board");
+
+    board.innerHTML = "";
+
+    for (let rank = 8; rank >= 1; rank--) {
+
+        for (let file = 0; file < 8; file++) {
+
+            const fileLetter = "abcdefgh"[file];
+            const squareName = fileLetter + rank;
+
+            const square = document.createElement("div");
+
+            square.className = "square " +
+                ((file + rank) % 2 === 0 ? "light" : "dark");
+
+            square.dataset.square = squareName;
+
+            if (selectedSquare === squareName) {
+                square.classList.add("selected");
+            }
+
+            if (selectedSquare) {
+
+                const legalMoves = game.moves({
+                    square: selectedSquare,
+                    verbose: true
                 });
 
-                if (move === null) {
-                    return "snapback";
+                const possible = legalMoves.find(
+                    move => move.to === squareName
+                );
+
+                if (possible) {
+
+                    if (possible.captured) {
+                        square.classList.add("capture-dot");
+                    } else {
+                        square.classList.add("legal-dot");
+                    }
                 }
-
-                board.position(game.fen());
-
-                document.getElementById("dialogue").textContent =
-                    "Oscar: Nice move! I'm thinking...";
             }
+
+            const piece = game.get(squareName);
+
+            if (piece) {
+
+                const pieceElement = document.createElement("div");
+
+                pieceElement.className = "piece";
+
+                pieceElement.textContent =
+                    pieces[piece.color][piece.type];
+
+                square.appendChild(pieceElement);
+            }
+
+            square.addEventListener("click", () => {
+                handleSquareClick(squareName);
+            });
+
+            board.appendChild(square);
+        }
+    }
+}
+
+
+function handleSquareClick(square) {
+
+    if (thinking) {
+        return;
+    }
+
+    if (game.game_over()) {
+        return;
+    }
+
+    if (game.turn() !== "w") {
+        return;
+    }
+
+    const piece = game.get(square);
+
+    /*
+     * Selecting a White piece
+     */
+
+    if (!selectedSquare) {
+
+        if (piece && piece.color === "w") {
+
+            selectedSquare = square;
+
+            setDialogue("Choose where you want to move.");
+
+            renderBoard();
+        }
+
+        return;
+    }
+
+
+    /*
+     * Clicking another White piece
+     * switches selection.
+     */
+
+    if (piece && piece.color === "w") {
+
+        selectedSquare = square;
+
+        renderBoard();
+
+        return;
+    }
+
+
+    /*
+     * Try the move.
+     */
+
+    const move = game.move({
+        from: selectedSquare,
+        to: square,
+        promotion: "q"
+    });
+
+
+    if (!move) {
+
+        setDialogue("That's not a legal move.");
+
+        return;
+    }
+
+
+    selectedSquare = null;
+
+    if (move.captured) {
+
+        capturedWhite.push(
+            pieces.b[move.captured]
+        );
+
+        updateCaptured();
+    }
+
+    renderBoard();
+
+
+    /*
+     * Player won.
+     */
+
+    if (game.game_over()) {
+
+        if (game.in_checkmate()) {
+
+            setDialogue(
+                "Checkmate! You won! 🎉"
+            );
+
+        } else {
+
+            setDialogue(
+                "The game is over."
+            );
+        }
+
+        return;
+    }
+
+
+    setDialogue(
+        "Interesting move... I'm thinking."
+    );
+
+    thinking = true;
+
+    setTimeout(oscarMove, 700);
+}
+
+
+function oscarMove() {
+
+    if (game.game_over()) {
+        thinking = false;
+        return;
+    }
+
+    /*
+     * Ask Oscar's programmed brain
+     * for a move.
+     */
+
+    let move = null;
+
+    if (
+        typeof getOscarMove === "function"
+    ) {
+
+        move = getOscarMove(game);
+    }
+
+
+    /*
+     * Safety fallback:
+     * choose a legal Black move.
+     */
+
+    if (!move) {
+
+        const legalMoves = game.moves({
+            verbose: true
         });
 
-        document.getElementById("dialogue").textContent =
-            playerColor === "w"
-            ? "Oscar: You're White. Your move!"
-            : "Oscar: You're Black. I'll make the first move.";
+        if (legalMoves.length === 0) {
+
+            thinking = false;
+            return;
+        }
+
+        move =
+            legalMoves[
+                Math.floor(
+                    Math.random() * legalMoves.length
+                )
+            ];
     }
 
 
-    function playWhite() {
+    const playedMove = game.move({
+        from: move.from,
+        to: move.to,
+        promotion: move.promotion || "q"
+    });
 
-        playerColor = "w";
 
-        newGame();
+    if (playedMove && playedMove.captured) {
 
-        document.getElementById("dialogue").textContent =
-            "Oscar: You're playing White. Your move!";
+        capturedBlack.push(
+            pieces.w[playedMove.captured]
+        );
+
+        updateCaptured();
     }
 
 
-    function playBlack() {
+    thinking = false;
 
-        playerColor = "b";
+    renderBoard();
 
-        newGame();
 
-        document.getElementById("dialogue").textContent =
-            "Oscar: You're playing Black. I'll move first soon.";
+    if (game.game_over()) {
+
+        if (game.in_checkmate()) {
+
+            setDialogue(
+                "Checkmate. Oscar wins this one. ♟️"
+            );
+
+        } else {
+
+            setDialogue(
+                "The game is over."
+            );
+        }
+
+        return;
     }
 
 
-    function goHome() {
+    if (playedMove) {
 
-        document.getElementById("gameScreen").style.display = "none";
-        document.getElementById("homeScreen").style.display = "block";
+        setDialogue(
+            "Your move. Think carefully."
+        );
     }
+}
+
+
+function setDialogue(text) {
+
+    document.getElementById(
+        "oscarDialogue"
+    ).textContent = text;
+}
+
+
+function updateCaptured() {
+
+    document.getElementById(
+        "whiteCaptured"
+    ).textContent =
+        capturedWhite.join(" ");
+
+    document.getElementById(
+        "blackCaptured"
+    ).textContent =
+        capturedBlack.join(" ");
+}
+
+
+function goHome() {
+
+    document.getElementById("gameScreen").style.display = "none";
+
+    document.getElementById("homeScreen").style.display = "block";
+}
 
 </script>
 
